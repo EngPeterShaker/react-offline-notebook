@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
-import checkLevDistance from "../utils/checkLevDistance";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import checkWordFreq from "../utils/checkWordFreq";
 import Chip from "@material-ui/core/Chip";
+import checkLevDistance from "../utils/checkLevDistance";
+import checkWordFreq from "../utils/checkWordFreq";
+import usePersistedState from "../utils/usePersistedState";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -21,17 +22,30 @@ const Editor = (props: Props) => {
 	const [refWord, setRefWord] = React.useState("");
 	const [wordFreq, setwordFreq] = React.useState(0);
 	const [similarity, setSimilarity] = React.useState<string[]>([]);
+	const [notebook, setNotebook] = usePersistedState("notebook", {
+		refWord,
+		textValue,
+	});
+	useEffect(() => {
+		const { refWord, textValue } = notebook;
+		setTextValue(textValue);
+		setRefWord(refWord);
+	}, [notebook]);
 
 	const handleChangetTextValue = (event: {
 		target: { value: React.SetStateAction<string> };
 	}) => {
-		setTextValue(event.target.value);
+		const targetValue = event.target.value;
+		setTextValue(targetValue);
+		setNotebook({ refWord, textValue: targetValue });
 	};
 
 	const handleChangRefWord = (event: {
 		target: { value: React.SetStateAction<string> };
 	}) => {
-		setRefWord(event.target.value);
+		const targetValue = event.target.value;
+		setRefWord(targetValue);
+		setNotebook({ textValue, refWord: targetValue });
 	};
 
 	useEffect(() => {
@@ -44,8 +58,6 @@ const Editor = (props: Props) => {
 			setSimilarity(mapped);
 		}
 	}, [refWord, textValue]);
-
-	// const test = checkLevDistance("hitting", "kit");
 
 	return (
 		<form className={classes.root} noValidate autoComplete="off">
@@ -70,14 +82,14 @@ const Editor = (props: Props) => {
 				/>
 			</div>
 			<p>frequency :{wordFreq}</p>
-			<p>
-				Similar word :
+			<div>
+				Similar word/s :
 				{similarity
 					.filter((word) => word !== "")
 					.map((word) => {
-						return <Chip label={word} />;
+						return <Chip key={word} label={word} />;
 					})}
-			</p>
+			</div>
 		</form>
 	);
 };

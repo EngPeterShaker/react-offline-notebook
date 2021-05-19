@@ -14,9 +14,8 @@ const useStyles = makeStyles((theme) => ({
 		},
 	},
 }));
-interface Props {}
 
-const Editor = (props: Props) => {
+const Editor = () => {
 	const classes = useStyles();
 	const [textValue, setTextValue] = React.useState("Words Wor word");
 	const [refWord, setRefWord] = React.useState("");
@@ -40,7 +39,7 @@ const Editor = (props: Props) => {
 		setNotebook({ refWord, textValue: targetValue });
 	};
 
-	const handleChangRefWord = (event: {
+	const handleChangeRefWord = (event: {
 		target: { value: React.SetStateAction<string> };
 	}) => {
 		const targetValue = event.target.value;
@@ -52,15 +51,22 @@ const Editor = (props: Props) => {
 		if (!!refWord) {
 			const wordFreq2 = checkWordFreq({ textValue, refWord });
 			setwordFreq(wordFreq2);
-			const mapped = textValue.split(" ").map((str) => {
-				return checkLevDistance(refWord, str);
-			});
+			const mapped = textValue
+				.split(" ")
+				.filter((i) => !!i)
+				.map((str) => checkLevDistance(refWord, str));
+			
 			setSimilarity(mapped);
 		}
 	}, [refWord, textValue]);
 
 	return (
-		<form className={classes.root} noValidate autoComplete="off">
+		<form
+			className={classes.root}
+			noValidate
+			autoComplete="off"
+			data-testid="editor-form"
+		>
 			<div>
 				<TextField
 					id="outlined-textarea"
@@ -78,7 +84,7 @@ const Editor = (props: Props) => {
 					label="Outlined"
 					variant="outlined"
 					value={refWord}
-					onChange={handleChangRefWord}
+					onChange={handleChangeRefWord}
 				/>
 			</div>
 			<p>frequency :{wordFreq}</p>

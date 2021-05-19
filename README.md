@@ -1,6 +1,5 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The Project is successfully deployed on Netlify with CI/CD 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b76add82-6366-4b42-845f-1a6790550897/deploy-status)](https://app.netlify.com/sites/react-offline-notebook/deploys)
 
 ## Available Scripts
 
